@@ -1,0 +1,25 @@
+.header {
+  padding: 0.5em 1em;
+  color: var(--teal);
+  background-color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  &__title {
+    font-size: 2em;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    
+    > * {
+      margin: 0.5em;
+    }
+    
+    svg {
+      font-size: 1.5em;
+    }
+  }
+}
