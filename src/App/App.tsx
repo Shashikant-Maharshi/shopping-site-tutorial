@@ -2,6 +2,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import Header from 'Header/Header';
 import useApp from 'App/app.hook';
 import UserList from 'UserList/UserList';
+import ProductLibrary from 'ProductLibrary/ProductLibrary';
 import './App.scss';
 
 function App() {
@@ -27,13 +28,7 @@ function App() {
         />
         <AiOutlineShoppingCart />
       </Header>
-      <div className='flex-fluid'>
-        <ul>
-          {Array(500).fill(null).map((_, idx) => (
-            <li key={idx}>{`item ${idx}`}</li>
-          ))}
-        </ul>
-      </div>
+      <ProductLibrary user={user?.args} />
     </div>
   );
 }

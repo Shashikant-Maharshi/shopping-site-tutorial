@@ -1,30 +1,31 @@
+/* Font */
+@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700');
+
 :root {
   --dark: #222831;
   --dark-light: #393E46;
-  --teal: #00ADB5;
+  --primary: #F1969B;
   --grey: #EEEEEE;
   --white: #FFFFFF;
   --black: #000000;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Quicksand', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
   display: flex;  /* enables flex content for its children */
-  box-sizing: border-box;
   background-color: var(--grey);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
 
 div#root {

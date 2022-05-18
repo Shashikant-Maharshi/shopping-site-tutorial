@@ -1,0 +1,38 @@
+.filters {
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+
+  &__search {
+    width: 50%;
+  }
+
+  &__pagination {
+    width: fit-content;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  &__item {
+    display: flex;
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 40rem) {
+  .grid__item {
+    width: 50%;
+  }
+}
+
+@media (min-width: 56rem) {
+  .grid__item {
+    width: 33.3333%;
+  }
+}
