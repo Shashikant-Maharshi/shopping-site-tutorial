@@ -1,3 +1,4 @@
+import { ChangeEvent } from 'react';
 import {User, UserRole} from 'shared/types/user';
 import ProductCard from 'ProductCard/ProductCard';
 import useProductLibrary from 'ProductLibrary/product-library.hook';
@@ -5,8 +6,9 @@ import Loader from 'shared/components/Loader/Loader';
 import SearchInput from 'shared/components/SearchInput/SearchInput';
 import Paginator, {Paginate} from 'shared/components/Paginator/Paginator';
 import {LibraryAction, MAX_PAGES} from 'ProductLibrary/product-library.constants';
+import ProductCart from 'ProductCart/ProductCart';
+import useCart from 'ProductLibrary/cart.hook';
 import "./product-library.scss";
-import { ChangeEvent } from 'react';
 
 type Props = {
   user: User,
@@ -21,12 +23,14 @@ const ProductLibrary = ({
     productsQuery,
     onAction,
   } = useProductLibrary();
+  const cart = useCart(user);
 
   if (productsQuery.isLoading) return <Loader message='Fetching products' />;
   else if (productsQuery.isError) return <i>No products found</i>;
 
   return (
     <>
+      <ProductCart cart={cart} />
       <div className='filters'>
         <div className='filters__search'>
           <SearchInput

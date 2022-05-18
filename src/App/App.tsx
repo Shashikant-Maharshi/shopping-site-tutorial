@@ -1,4 +1,3 @@
-import { AiOutlineShoppingCart } from "react-icons/ai";
 import Header from 'Header/Header';
 import useApp from 'App/app.hook';
 import UserList from 'UserList/UserList';
@@ -26,9 +25,12 @@ function App() {
           isError={usersQuery.isError}
           users={usersLookup}
         />
-        <AiOutlineShoppingCart />
       </Header>
-      <ProductLibrary user={user?.args} />
+      {!user?.args ? (
+        <h3 style={{margin: "1em"}}>Please choose an user account.</h3>
+      ) : (
+        <ProductLibrary user={user?.args} />
+      )}
     </div>
   );
 }
