@@ -1,0 +1,25 @@
+.product-cart {
+  position: absolute;
+  bottom: 1em;
+  right: 2em;
+  
+  &__button {
+    padding: 0.5em;
+    background-color: #67fc82;
+    border: 0;
+    color: black;
+    font-size: 1em;
+    cursor: pointer;
+  }
+}
+
+.modal {
+  button {
+    padding: 0.5em;
+    background-color: #67fc82;
+    border: 0;
+    color: black;
+    font-size: 1em;
+    cursor: pointer;
+  }
+}
