@@ -21,7 +21,7 @@ const ProductCart = ({
       return (
         <ul>
           {cart.data?.products.map((product) => (
-            <li>
+            <li key={product.id}>
               <ProductView 
                 productId={product.id} 
                 quantity={product.quantity} 
