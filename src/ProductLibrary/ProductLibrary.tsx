@@ -7,8 +7,19 @@ import SearchInput from 'shared/components/SearchInput/SearchInput';
 import Paginator, {Paginate} from 'shared/components/Paginator/Paginator';
 import {LibraryAction, MAX_PAGES} from 'ProductLibrary/product-library.constants';
 import ProductCart from 'ProductCart/ProductCart';
+import ProductForm from 'ProductForm/ProductForm';
+import {Product} from 'shared/types/product';
 import useCart from 'ProductLibrary/cart.hook';
 import "./product-library.scss";
+
+const defaultProduct: Product = {
+  name: '',
+  description: '',
+  price: 0,
+  discount: 0,
+  defaultImage: "http://placeimg.com/640/480/cats",
+  images: Array(4).fill("http://placeimg.com/640/480/cats")
+};
 
 type Props = {
   user: User,
@@ -20,8 +31,11 @@ const ProductLibrary = ({
   const {
     page,
     search,
+    selectedProduct,
+    selectedProductAction,
     productsQuery,
     onAction,
+    processingForm,
   } = useProductLibrary();
   const cart = useCart(user);
 
@@ -31,8 +45,16 @@ const ProductLibrary = ({
   return (
     <>
       <ProductCart cart={cart} />
-      <div className='filters'>
-        <div className='filters__search'>
+      {selectedProduct && selectedProductAction !== LibraryAction.DeleteProduct && (
+        <ProductForm 
+          product={selectedProduct}
+          onSubmit={(product: Product) => onAction(LibraryAction.MutateProduct, product)}
+          onClose={() => onAction(LibraryAction.SelectProduct, undefined)}
+          processingForm={processingForm}
+        />
+      )}
+      <div className='tools'>
+        <div className='tools__search'>
           <SearchInput
             search={search || ''}
             onClear={() => onAction(LibraryAction.UpdateSearch, '')}
@@ -43,8 +65,15 @@ const ProductLibrary = ({
             id="filterByProductTitle"
             title="Filter products by their title"
           />
+          <button 
+            name="create-new-product" 
+            className='tools__button'
+            onClick={() => onAction(LibraryAction.CreateProduct, defaultProduct)}
+          >
+            Create New Product
+          </button>
         </div>
-        <div className='filters__pagination'>
+        <div className='tools__pagination'>
           <Paginator
             page={page}
             onChange={(event) => {

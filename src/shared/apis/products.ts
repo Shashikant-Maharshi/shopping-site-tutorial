@@ -1,4 +1,4 @@
-import {baseUrl} from 'shared/apis/constants/api';
+import apiClient from 'shared/apis/utilities/api-client';
 import {Product} from 'shared/types/product';
 import {QueryParams, formatQueryParams} from 'shared/apis/utilities/query-params';
 
@@ -9,13 +9,21 @@ export const getProducts = async (queryParams: QueryParams): Promise<Product[]> 
     query = `?${formatQueryParams(queryParams)}`;
   }
   
-  return await (await fetch(`${baseUrl}/products${query}`)).json()
+  return (await apiClient.get(`/products${query}`)).data;
 };
 
 export const getProduct = async (productId: number | string): Promise<Product> => (
-  await (await fetch(`${baseUrl}/products/${productId}`)).json()
+  (await apiClient.get(`/products/${productId}`)).data
 );
 
-export const deleteProduct = async (productId: string | number) => (
-  await ( await fetch(`${baseUrl}/products/${productId}`, { method: 'DELETE' })).json()
+export const createProduct = async (product: Product) => (
+  (await apiClient.post("/products", product)).data
+);
+
+export const updateProduct = async (product: Product) => (
+  (await apiClient.put(`/products/${product.id}`, product)).data
+);
+
+export const deleteProduct = async (product: Product) => (
+  (await apiClient.delete(`/products/${product.id}`)).data
 );

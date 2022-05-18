@@ -3,40 +3,40 @@ import { createPortal } from 'react-dom';
 import "./modal.scss";
 
 type Props = {
+  className?: string;
   onClose: Function;
   show: boolean;
 };
 
 const Modal = ({
   children,
+  className,
   show,
   onClose,
 }: PropsWithChildren<Props>) => {
   const portalTarget = document.getElementById('root');
   const parts = getParts(children);
   const renderModal = () => (
-    <>
-      <div className='bg-overlay'>
-        <div className='modal'>
-          {parts.header && (
-            <div className='modal__header'>
-              <span>{parts.header.title}</span>
-              <button className='modal__cancel' onClick={() => onClose()}>
-                X
-              </button>
-            </div>
-          )}
-          <div className='modal__content'>
-            {parts.content.children}
+    <div className={`bg-overlay ${className}`}>
+      <div className='modal'>
+        {parts.header && (
+          <div className='modal__header'>
+            <span>{parts.header.title}</span>
+            <button className='modal__cancel' onClick={() => onClose()}>
+              X
+            </button>
           </div>
-          {parts.footer && (
-            <div className='modal__footer'>
-              {parts.footer.children}
-            </div>
-          )}
+        )}
+        <div className='modal__content'>
+          {parts.content.children}
         </div>
+        {parts.footer && (
+          <div className='modal__footer'>
+            {parts.footer.children}
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
   
   return show ? (
