@@ -1,10 +1,15 @@
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import {User} from 'shared/types/user';
 import {Cart} from 'shared/types/cart';
 import {Product} from 'shared/types/product';
 import {getCart, createCart, updateCart} from 'shared/apis/cart';
 
 const useCart = (user: User) => {
+  const queryClient = useQueryClient();
+  const mutationResetOptions = {
+    onSuccess: () => queryClient.invalidateQueries(),
+    onError: () => queryClient.invalidateQueries()
+  };
   const cartQuery = useQuery<Cart>(
     ['cart', user.id],
     () => getCart(user.id)
@@ -12,11 +17,11 @@ const useCart = (user: User) => {
   const { 
     isLoading: isCreatingCart, 
     mutate: createCartMutation
-  } = useMutation(createCart);
+  } = useMutation(createCart, mutationResetOptions);
   const { 
     isLoading: isUpdatingCart, 
     mutate: updateCartMutation
-  } = useMutation(updateCart);
+  } = useMutation(updateCart, mutationResetOptions);
   const handleUpdateCart = (newProduct: Product) => {
     const { data } = cartQuery;
     const cartProductIndex = data?.products.findIndex((product) => product.id === newProduct.id);
