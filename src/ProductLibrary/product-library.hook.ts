@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import {LibraryAction, PRODUCT_DISPLAY_LIMIT} from 'ProductLibrary/product-library.constants';
 import {Product} from 'shared/types/product';
 import {
@@ -14,9 +14,11 @@ const useProductLibrary = () => {
   const [page, setPage] = useState<number>(1);
   const [selectedProductAction, setSelectedProductAction] = useState<LibraryAction>();
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>(undefined);
+  const queryClient = useQueryClient();
   const resetOpretationsState = () => {
     setSelectedProductAction(undefined);
     setSelectedProduct(undefined);
+    queryClient.invalidateQueries();
   };
   const mutationResetOptions = {
     onSuccess: () => resetOpretationsState(),
@@ -39,7 +41,9 @@ const useProductLibrary = () => {
     isLoading: isUpdatingProduct, 
     mutate: updateProductMutation
   } = useMutation(updateProduct, mutationResetOptions);
-  const { mutate: deleteProductMutation } = useMutation(deleteProduct);
+  const { 
+    mutate: deleteProductMutation 
+  } = useMutation(deleteProduct, mutationResetOptions);
   const { refetch } = productsQuery;
   const onAction = useCallback((type: LibraryAction, payload: any) => {
     const handlers: Record<LibraryAction, Function> = {
