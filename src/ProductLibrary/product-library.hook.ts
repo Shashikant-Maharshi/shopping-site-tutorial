@@ -39,21 +39,15 @@ const useProductLibrary = () => {
     isLoading: isUpdatingProduct, 
     mutate: updateProductMutation
   } = useMutation(updateProduct, mutationResetOptions);
-  const { 
-    isLoading: isDeletingProduct, 
-    mutate: deleteProductMutation 
-  } = useMutation(deleteProduct);
+  const { mutate: deleteProductMutation } = useMutation(deleteProduct);
   const { refetch } = productsQuery;
   const onAction = useCallback((type: LibraryAction, payload: any) => {
-    const handlers = {
+    const handlers: Record<LibraryAction, Function> = {
       [LibraryAction.UpdatePage]: () => {
         setPage(payload);
       },
       [LibraryAction.UpdateSearch]: () => {
         setSearch(payload);
-      },
-      [LibraryAction.AddToCart]: () => {
-        console.log('add-to-cart');
       },
       [LibraryAction.CreateProduct]: () => {
         setSelectedProductAction(LibraryAction.CreateProduct);
@@ -79,12 +73,18 @@ const useProductLibrary = () => {
         } else if (selectedProductAction === LibraryAction.EditProduct) {
           updateProductMutation(payload);
         }
-      }
+      },
+      [LibraryAction.AddToCart]: () => {
+        // by passed to useCart hook
+      },
     };
 
     const runner = handlers[type] || (() => {});
     runner();
-  }, [createProductMutation, deleteProductMutation, selectedProductAction, updateProductMutation]);
+  }, [
+    createProductMutation, deleteProductMutation, 
+    selectedProductAction, updateProductMutation,
+  ]);
 
   useEffect(() => {
     refetch();
@@ -97,7 +97,10 @@ const useProductLibrary = () => {
     selectedProductAction,
     productsQuery,
     onAction,
-    processingForm: isCreatingProduct || isUpdatingProduct,
+    processingForm: (
+      isCreatingProduct 
+      || isUpdatingProduct
+    ),
   };
 };
 

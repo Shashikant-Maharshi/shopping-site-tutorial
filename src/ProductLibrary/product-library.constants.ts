@@ -1,5 +1,4 @@
 export enum LibraryAction {
-  AddToCart,
   CreateProduct,
   EditProduct,
   DeleteProduct,
@@ -7,6 +6,7 @@ export enum LibraryAction {
   UpdateSearch,
   SelectProduct,
   MutateProduct,
+  AddToCart,
 }
 
 export const MAX_PAGES = 100;

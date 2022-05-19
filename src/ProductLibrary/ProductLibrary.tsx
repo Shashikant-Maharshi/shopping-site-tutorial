@@ -37,14 +37,17 @@ const ProductLibrary = ({
     onAction,
     processingForm,
   } = useProductLibrary();
-  const cart = useCart(user);
+  const {
+    cartQuery,
+    handleUpdateCart,
+  } = useCart(user);
 
   if (productsQuery.isLoading) return <Loader message='Fetching products' />;
   else if (productsQuery.isError) return <i>No products found</i>;
 
   return (
     <>
-      <ProductCart cart={cart} />
+      <ProductCart cart={cartQuery} />
       {selectedProduct && selectedProductAction !== LibraryAction.DeleteProduct && (
         <ProductForm 
           product={selectedProduct}
@@ -99,7 +102,13 @@ const ProductLibrary = ({
               <ProductCard 
                 product={product}
                 isAdmin={user?.role === UserRole.Admin}
-                onAction={onAction}
+                onAction={(action: LibraryAction, ...args) => {
+                  if (action === LibraryAction.AddToCart) {
+                    handleUpdateCart(...args);
+                  } else {
+                    onAction(action, ...args);
+                  }
+                }}
               />
             </li>
           ))}

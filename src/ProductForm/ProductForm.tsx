@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useEffect } from 'react';
+import { ChangeEvent, useState } from 'react';
 import Modal from 'shared/components/Modal/Modal';
 import { Product } from 'shared/types/product';
 import "./product-form.scss";
@@ -27,14 +27,9 @@ const ProductForm = ({
       ...form,
       [field]: event.target.value,
     } as Product;
-    console.log(newForm);
     
     setForm(newForm);
   }
-
-  useEffect(() => {
-    setForm(product);
-  }, [product]);
 
   return (
     <Modal
@@ -48,7 +43,8 @@ const ProductForm = ({
           <label>
             <span>Name:</span>
             <input 
-              value={form?.description} 
+              name="name"
+              value={form?.name} 
               onChange={(event: FormFieldEvent) => handleFormChange('name', event)} 
               required
             />
@@ -56,6 +52,7 @@ const ProductForm = ({
           <label>
             <span>Description:</span>
             <textarea 
+              name="description"
               value={form?.description} 
               onChange={(event: FormFieldEvent) => handleFormChange('description', event)} 
               required
@@ -64,6 +61,7 @@ const ProductForm = ({
           <label>
             <span>Price:</span>
             <input 
+              name="price"
               type="number"
               value={form?.price} 
               onChange={(event: FormFieldEvent) => handleFormChange('price', event)} 
@@ -73,6 +71,7 @@ const ProductForm = ({
           <label>
             <span>Discount:</span>
             <input 
+              name="discount"
               type="number"
               value={form?.discount} 
               onChange={(event: FormFieldEvent) => handleFormChange('discount', event)} 
