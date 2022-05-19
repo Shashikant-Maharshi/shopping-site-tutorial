@@ -1,7 +1,10 @@
+import { ToastContainer } from 'react-toastify';
 import Header from 'Header/Header';
 import useApp from 'App/app.hook';
 import UserList from 'UserList/UserList';
 import ProductLibrary from 'ProductLibrary/ProductLibrary';
+
+import "react-toastify/dist/ReactToastify.css";
 import './App.scss';
 
 function App() {
@@ -31,6 +34,8 @@ function App() {
       ) : (
         <ProductLibrary user={user?.args} />
       )}
+      
+      <ToastContainer />
     </div>
   );
 }

@@ -41,6 +41,7 @@ const ProductLibrary = ({
     cartQuery,
     handleUpdateCart,
   } = useCart(user);
+  const isAdmin = user?.role === UserRole.Admin;
 
   if (productsQuery.isLoading) return <Loader message='Fetching products' />;
   else if (productsQuery.isError) return <i>No products found</i>;
@@ -68,13 +69,15 @@ const ProductLibrary = ({
             id="filterByProductTitle"
             title="Filter products by their title"
           />
-          <button 
-            name="create-new-product" 
-            className='tools__button'
-            onClick={() => onAction(LibraryAction.CreateProduct, defaultProduct)}
-          >
-            Create New Product
-          </button>
+          {isAdmin && (
+            <button 
+              name="create-new-product" 
+              className='tools__button'
+              onClick={() => onAction(LibraryAction.CreateProduct, defaultProduct)}
+            >
+              Create New Product
+            </button>
+          )}
         </div>
         <div className='tools__pagination'>
           <Paginator
@@ -101,7 +104,7 @@ const ProductLibrary = ({
             <li className="grid__item" key={product.id}>
               <ProductCard 
                 product={product}
-                isAdmin={user?.role === UserRole.Admin}
+                isAdmin={isAdmin}
                 onAction={(action: LibraryAction, ...args) => {
                   if (action === LibraryAction.AddToCart) {
                     handleUpdateCart(...args);

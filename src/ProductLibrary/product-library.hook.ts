@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { toast } from 'react-toastify';
 import {LibraryAction, PRODUCT_DISPLAY_LIMIT} from 'ProductLibrary/product-library.constants';
 import {Product} from 'shared/types/product';
 import {
@@ -7,6 +8,21 @@ import {
   updateProduct, deleteProduct
 } from 'shared/apis/products';
 import useDebounce from 'shared/hooks/debounce';
+
+const productOperationMessages = {
+  [LibraryAction.CreateProduct]: {
+    success: 'Product created successfully.',
+    error: 'Failed to create product',
+  },
+  [LibraryAction.EditProduct]: {
+    success: 'Product updated successfully.',
+    error: 'Failed to update product',
+  },
+  [LibraryAction.DeleteProduct]: {
+    success: 'Product deleted successfully.',
+    error: 'Failed to delete product',
+  }
+}
 
 const useProductLibrary = () => {
   const [search, setSearch] = useState<string>('');
@@ -20,10 +36,16 @@ const useProductLibrary = () => {
     setSelectedProduct(undefined);
     queryClient.invalidateQueries();
   };
-  const mutationResetOptions = {
-    onSuccess: () => resetOpretationsState(),
-    onError: () => resetOpretationsState(),
-  };
+  const mutationResetOptions = (messages: any) => ({
+    onSuccess: () => {
+      toast.success(messages.success);
+      resetOpretationsState();
+    },
+    onError: () => {
+      toast.error(messages.error);
+      resetOpretationsState();
+    },
+  });
   const productsQuery = useQuery<Product[]>(
     ['products', page, PRODUCT_DISPLAY_LIMIT],
     () => getProducts([
@@ -36,14 +58,23 @@ const useProductLibrary = () => {
   const { 
     isLoading: isCreatingProduct, 
     mutate: createProductMutation
-  } = useMutation(createProduct, mutationResetOptions);
+  } = useMutation(
+    createProduct, 
+    mutationResetOptions(productOperationMessages[LibraryAction.CreateProduct])
+  );
   const { 
     isLoading: isUpdatingProduct, 
     mutate: updateProductMutation
-  } = useMutation(updateProduct, mutationResetOptions);
+  } = useMutation(
+    updateProduct, 
+    mutationResetOptions(productOperationMessages[LibraryAction.EditProduct])
+  );
   const { 
     mutate: deleteProductMutation 
-  } = useMutation(deleteProduct, mutationResetOptions);
+  } = useMutation(
+    deleteProduct, 
+    mutationResetOptions(productOperationMessages[LibraryAction.DeleteProduct])
+  );
   const { refetch } = productsQuery;
   const onAction = useCallback((type: LibraryAction, payload: any) => {
     const handlers: Record<LibraryAction, Function> = {
