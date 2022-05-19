@@ -25,7 +25,13 @@ const ProductCard = ({
           <del>{`$${product.discount}`}</del>
           <ins>{`$${product.price}`}</ins>
         </p>
-        {isAdmin ? (
+        <button 
+          className="btn product-card__btn"
+          onClick={() => onAction(LibraryAction.AddToCart, product)}
+        >
+          Add to Cart
+        </button>
+        {isAdmin && (
           <>
             <button 
               className="btn product-card__btn"
@@ -40,13 +46,6 @@ const ProductCard = ({
               Delete
             </button>
           </>  
-        ) : (
-          <button 
-            className="btn product-card__btn"
-            onClick={() => onAction(LibraryAction.AddToCart, product)}
-          >
-            Add to Cart
-          </button>
         )}
       </div>
     </div>
