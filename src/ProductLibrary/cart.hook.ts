@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { toast } from 'react-toastify';
 import {User} from 'shared/types/user';
 import {Cart} from 'shared/types/cart';
 import {Product} from 'shared/types/product';
@@ -6,10 +7,6 @@ import {getCart, createCart, updateCart} from 'shared/apis/cart';
 
 const useCart = (user: User) => {
   const queryClient = useQueryClient();
-  const mutationResetOptions = {
-    onSuccess: () => queryClient.invalidateQueries(),
-    onError: () => queryClient.invalidateQueries()
-  };
   const cartQuery = useQuery<Cart>(
     ['cart', user.id],
     () => getCart(user.id)
@@ -17,11 +14,35 @@ const useCart = (user: User) => {
   const { 
     isLoading: isCreatingCart, 
     mutate: createCartMutation
-  } = useMutation(createCart, mutationResetOptions);
+  } = useMutation(
+    createCart,
+    {
+      onSuccess: () => {
+        toast.success('Cart created successfully.');
+        queryClient.invalidateQueries();
+      },
+      onError: () => {
+        toast.error('Failed to create cart.');
+        queryClient.invalidateQueries();
+      }
+    }
+  );
   const { 
     isLoading: isUpdatingCart, 
     mutate: updateCartMutation
-  } = useMutation(updateCart, mutationResetOptions);
+  } = useMutation(
+    updateCart, 
+    {
+      onSuccess: () => {
+        toast.success('Cart updated successfully.');
+        queryClient.invalidateQueries();
+      },
+      onError: () => {
+        toast.error('Failed to update cart.');
+        queryClient.invalidateQueries();
+      }
+    }
+  );
   const handleUpdateCart = (newProduct: Product) => {
     const { data } = cartQuery;
     const cartProductIndex = data?.products.findIndex((product) => product.id === newProduct.id);
