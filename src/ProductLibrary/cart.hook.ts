@@ -1,9 +1,32 @@
-import { useQuery, useQueryClient, useMutation } from 'react-query';
+import {useMemo} from 'react';
+import { 
+  useQuery, 
+  useQueries,
+  useQueryClient, 
+  useMutation 
+} from 'react-query';
 import { toast } from 'react-toastify';
 import {User} from 'shared/types/user';
-import {Cart} from 'shared/types/cart';
+import {Cart, CartProduct} from 'shared/types/cart';
 import {Product} from 'shared/types/product';
 import {getCart, createCart, updateCart} from 'shared/apis/cart';
+import { getProduct } from 'shared/apis/products';
+
+enum CartOperations {
+  Create,
+  Update,
+}
+
+const cartOperationMessages = {
+  [CartOperations.Create]: {
+    success: 'Cart created successfully.',
+    error: 'Failed to create cart',
+  },
+  [CartOperations.Update]: {
+    success: 'Cart updated successfully.',
+    error: 'Failed to update cart',
+  },
+};
 
 const useCart = (user: User) => {
   const queryClient = useQueryClient();
@@ -11,38 +34,63 @@ const useCart = (user: User) => {
     ['cart', user.id],
     () => getCart(user.id)
   );
-  const { 
-    isLoading: isCreatingCart, 
-    mutate: createCartMutation
-  } = useMutation(
+  const { isLoading, isError, isFetching, data: cartData } = cartQuery
+  const products = useMemo(() => cartData?.products || [], [cartData?.products]);
+
+  const productsQuery = useQueries(
+    products.map(product => {
+      return {
+        queryKey: ['product', product.id],
+        queryFn: () => getProduct(product.id),
+      }
+    })
+  );
+
+  const isProductsLoading = productsQuery.some((productQuery) => productQuery.isLoading);
+
+  const cart: any = useMemo(() => {
+    const formattedCartProducts: CartProduct[] = [];
+
+    if (!isProductsLoading && products.length) {
+      for (const [productIndex, productQuery] of Object.entries(productsQuery)) {
+        if (productQuery.data) {
+          const { quantity } = products[productIndex as any];
+          formattedCartProducts[productIndex as any] = {
+            ...productQuery.data,
+            quantity,
+            total: Math.floor(productQuery.data.price * quantity),
+          };
+        }
+      }
+    }
+
+    return {
+      id: cartData?.id,
+      products: formattedCartProducts,
+    };
+  }, [cartData?.id, isProductsLoading, products, productsQuery]);
+
+  const mutationResetOptions = (messages: any) => ({
+    onSuccess: () => {
+      toast.success(messages.success);
+      queryClient.invalidateQueries();
+    },
+    onError: () => {
+      toast.error(messages.error);
+      queryClient.invalidateQueries();
+    },
+  }); 
+
+  const { mutate: createCartMutation } = useMutation(
     createCart,
-    {
-      onSuccess: () => {
-        toast.success('Cart created successfully.');
-        queryClient.invalidateQueries();
-      },
-      onError: () => {
-        toast.error('Failed to create cart.');
-        queryClient.invalidateQueries();
-      }
-    }
+    mutationResetOptions(cartOperationMessages[CartOperations.Create])
   );
-  const { 
-    isLoading: isUpdatingCart, 
-    mutate: updateCartMutation
-  } = useMutation(
+
+  const { mutate: updateCartMutation } = useMutation(
     updateCart, 
-    {
-      onSuccess: () => {
-        toast.success('Cart updated successfully.');
-        queryClient.invalidateQueries();
-      },
-      onError: () => {
-        toast.error('Failed to update cart.');
-        queryClient.invalidateQueries();
-      }
-    }
+    mutationResetOptions(cartOperationMessages[CartOperations.Update])
   );
+
   const handleUpdateCart = (newProduct: Product) => {
     const { data } = cartQuery;
     const cartProductIndex = data?.products.findIndex((product) => product.id === newProduct.id);
@@ -78,10 +126,12 @@ const useCart = (user: User) => {
   };
   
   return {
-    cartQuery,
+    isLoading,
+    isError,
+    isFetching,
+    cart,
     handleUpdateCart,
-    processingCart: isCreatingCart || isUpdatingCart,
   };
-}
+} 
 
 export default useCart;

@@ -1,31 +1,33 @@
 import { useState } from "react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
-import { UseQueryResult } from "react-query";
 import Modal from 'shared/components/Modal/Modal';
-import { Cart } from "shared/types/cart";
+import { ClientCart } from "shared/types/cart";
 import ProductView from 'ProductCart/ProductView';
 import "./product-cart.scss";
 
 type Props = {
-  cart: UseQueryResult<Cart>;
+  cart: ClientCart;
+  isError: boolean;
+  isLoading: boolean;
+  isFetching: boolean;
 }
 
 const ProductCart = ({
+  isLoading,
+  isError,
+  isFetching,
   cart,
 }: Props) => {
   const [show, setShow] = useState(false);
   const renderContent = () => {
-    if (cart.isLoading) return <i>Fetching users cart...</i>
-    else if (cart.isError) return <h3>Failed to load users cart.</h3>
+    if (isLoading) return <i>Fetching users cart...</i>
+    else if (isError) return <h3>Failed to load users cart.</h3>
     else {
       return (
         <ul>
-          {cart.data?.products.map((product) => (
+          {cart.products.map((product) => (
             <li key={product.id}>
-              <ProductView 
-                productId={product.id} 
-                quantity={product.quantity} 
-              />
+              <ProductView product={product} />
             </li>
           ))}
         </ul>
@@ -56,7 +58,7 @@ const ProductCart = ({
       </Modal>
       <button className="product-cart__button" onClick={() => setShow(!show)}>
         <AiOutlineShoppingCart />{" "}
-        {cart.isFetching ? 'Loading...' : `Cart Products (${cart.data?.products.length || 0})`}
+        {isFetching ? 'Loading...' : `Cart Products (${cart.products.length || 0})`}
       </button>
     </div>
   )
