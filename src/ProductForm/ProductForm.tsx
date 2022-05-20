@@ -84,7 +84,11 @@ const ProductForm = ({
         {processingForm ? (
           <i>Saving form data...</i>
         ) : (
-          <button onClick={() => onSubmit(form as Product)}>
+          <button
+            className='secondary-button'
+            name="save" 
+            onClick={() => onSubmit(form as Product)}
+          >
             {isNew ? 'Submit' : 'Update'}
           </button>
         )}

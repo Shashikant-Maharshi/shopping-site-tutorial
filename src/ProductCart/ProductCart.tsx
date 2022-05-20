@@ -23,13 +23,25 @@ const ProductCart = ({
     if (isLoading) return <i>Fetching users cart...</i>
     else if (isError) return <h3>Failed to load users cart.</h3>
     else {
+      let sumTotal = 0;
+      const productViews = [];
+
+      for (const [productIndex, product] of Object.entries(cart.products)) {
+        sumTotal += product.total;
+        productViews.push((
+          <li key={product.id} className="product">
+            <ProductView series={Number(productIndex) + 1} product={product} />
+          </li>
+        ));
+      }
       return (
-        <ul>
-          {cart.products.map((product) => (
-            <li key={product.id}>
-              <ProductView product={product} />
-            </li>
-          ))}
+        <ul className="products">
+          {productViews}
+          <li>
+            <h3>
+              Sum Total: ${Math.floor(sumTotal)}
+            </h3>
+          </li>
         </ul>
       );
     }
@@ -38,25 +50,36 @@ const ProductCart = ({
   return (
     <div className="product-cart">
       <Modal
+        className="shopping-cart-modal"
         show={show}
         onClose={() => setShow(false)}
       >
-        <Modal.Header title="Shopping Cart" />
+        <Modal.Header title={`Shopping Cart (${cart.products.length} products)`} />
         <Modal.Content>
           {renderContent()}
         </Modal.Content>
         <Modal.Footer>
-          <button onClick={() => {
-            setShow(false);
-            setTimeout(() => {
-              alert('Payment successful. Thanks for buying from our store.');
-            }, 500);
-          }}>
+          <button 
+            className="secondary-button"
+            name="checkout"
+            title="Checkout"
+            onClick={() => {
+              setShow(false);
+              setTimeout(() => {
+                alert('Payment successful. Thanks for buying from our store.');
+              }, 500);
+            }}
+          >
             Checkout
           </button>
         </Modal.Footer>
       </Modal>
-      <button className="product-cart__button" onClick={() => setShow(!show)}>
+      <button 
+        name="show-cart"
+        title="Show cart"
+        className="secondary-button" 
+        onClick={() => setShow(!show)}
+      >
         <AiOutlineShoppingCart />{" "}
         {isFetching ? 'Loading...' : `Cart Products (${cart.products.length || 0})`}
       </button>

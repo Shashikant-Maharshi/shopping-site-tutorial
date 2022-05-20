@@ -2,24 +2,29 @@
   position: absolute;
   bottom: 1em;
   right: 2em;
-  
-  &__button {
-    padding: 0.5em;
-    background-color: #67fc82;
-    border: 0;
-    color: black;
-    font-size: 1em;
-    cursor: pointer;
-  }
 }
 
-.modal {
-  button {
-    padding: 0.5em;
-    background-color: #67fc82;
-    border: 0;
-    color: black;
-    font-size: 1em;
-    cursor: pointer;
+.shopping-cart-modal {
+  .products {
+    list-style: none;
+    padding: 0;
+
+    .product {
+      margin-bottom: 1em;
+      border-bottom: 1px solid var(--grey);
+
+      .product-view {
+        > * {
+          margin: 0;
+          padding: 0.5em 1em;
+        }
+
+        h3 {
+          border-bottom: var(--primary);
+          color: var(--primary);
+        }
+      }
+    }
   }
+
 }
