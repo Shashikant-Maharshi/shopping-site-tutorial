@@ -38,7 +38,10 @@ const ProductLibrary = ({
     processingForm,
   } = useProductLibrary();
   const {
-    cartQuery,
+    cart,
+    isLoading,
+    isError,
+    isFetching,
     handleUpdateCart,
   } = useCart(user);
   const isAdmin = user?.role === UserRole.Admin;
@@ -48,7 +51,7 @@ const ProductLibrary = ({
 
   return (
     <>
-      <ProductCart cart={cartQuery} />
+      <ProductCart isError={isError} isLoading={isLoading} isFetching={isFetching} cart={cart} />
       {selectedProduct && selectedProductAction !== LibraryAction.DeleteProduct && (
         <ProductForm 
           product={selectedProduct}
